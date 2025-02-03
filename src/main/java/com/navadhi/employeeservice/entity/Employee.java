@@ -11,7 +11,8 @@ public class Employee {
 
     @Id
     @GeneratedValue(generator = "employeeidseq", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "employeeidseq", sequenceName = "employee_id_seq", allocationSize = 1, initialValue = 1, schema = "employee_management")
+    @SequenceGenerator(name = "employeeidseq", sequenceName = "employee_id_seq",
+            allocationSize = 1, initialValue = 1, schema = "employee_management")
     @Column(name = "employee_id", nullable = false)
     private long employeeId;
 

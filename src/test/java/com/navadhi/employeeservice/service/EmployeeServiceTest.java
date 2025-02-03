@@ -3,7 +3,6 @@ package com.navadhi.employeeservice.service;
 import com.navadhi.employeeservice.dto.EmployeeDto;
 import com.navadhi.employeeservice.entity.Employee;
 import com.navadhi.employeeservice.repository.EmployeeRepository;
-import com.navadhi.employeeservice.service.EmployeeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
