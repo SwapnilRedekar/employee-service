@@ -10,9 +10,8 @@ public interface IEmployeeService {
 
     EmployeeDto findByEmail(String email);
 
-<<<<<<< HEAD
     List<EmployeeDto> getAllEmployees();
-=======
+
     EmployeeDto getEmployeeById(long id);
->>>>>>> 6434e30 (Feature to fetch Employee by employee id)
+
 }
