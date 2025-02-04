@@ -35,9 +35,16 @@ public class EmployeeService implements IEmployeeService{
     }
 
     @Override
+<<<<<<< HEAD
     public List<EmployeeDto> getAllEmployees() {
         return employeeRepository.findAll().stream()
                 .map(EmployeeMapper::toEmployeeDto)
                 .toList();
+=======
+    public EmployeeDto getEmployeeById(long id) {
+        return employeeRepository.findById(id)
+                .map(EmployeeMapper::toEmployeeDto)
+                .orElse(null);
+>>>>>>> 6434e30 (Feature to fetch Employee by employee id)
     }
 }
