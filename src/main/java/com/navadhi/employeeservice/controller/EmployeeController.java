@@ -35,15 +35,12 @@ public class EmployeeController {
         return ResponseEntity.ok(persistedEmployee);
     }
 
-<<<<<<< HEAD
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<EmployeeDto>> getEmployees() {
         List<EmployeeDto> employees = employeeService.getAllEmployees();
         return employees.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(employees);
     }
 
-
-=======
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") long id) {
         EmployeeDto employeeDto = employeeService.getEmployeeById(id);
@@ -53,7 +50,5 @@ public class EmployeeController {
 
         return ResponseEntity.ok(employeeDto);
     }
-
->>>>>>> 6434e30 (Feature to fetch Employee by employee id)
 
 }
