@@ -2,8 +2,10 @@ package com.navadhi.employeeservice.controller;
 
 import com.navadhi.employeeservice.dto.EmployeeDto;
 import com.navadhi.employeeservice.exception.EmailAlreadyExistsException;
+import com.navadhi.employeeservice.exception.ResourceNotFoundException;
 import com.navadhi.employeeservice.service.IEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,7 @@ public class EmployeeController {
         return ResponseEntity.ok(persistedEmployee);
     }
 
+<<<<<<< HEAD
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<EmployeeDto>> getEmployees() {
         List<EmployeeDto> employees = employeeService.getAllEmployees();
@@ -40,5 +43,17 @@ public class EmployeeController {
     }
 
 
+=======
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") long id) {
+        EmployeeDto employeeDto = employeeService.getEmployeeById(id);
+
+        if(Objects.isNull(employeeDto))
+            throw new ResourceNotFoundException("Employee", "Employee Id", String.valueOf(id));
+
+        return ResponseEntity.ok(employeeDto);
+    }
+
+>>>>>>> 6434e30 (Feature to fetch Employee by employee id)
 
 }

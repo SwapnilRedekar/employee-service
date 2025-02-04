@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,9 +129,33 @@ class EmployeeControllerTest {
     void shouldReturnHttpStatusNoContent() throws Exception {
         Mockito.when(employeeService.getAllEmployees()).thenReturn(Collections.emptyList());
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/v1/employees"))
+                        .get("/v1/employees"))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         Mockito.verify(employeeService, Mockito.times(1)).getAllEmployees();
+    }
+
+    @Test
+    void shouldReturnHttpStatusOkAndEmployeeWithGivenId() throws Exception {
+        employeeDto = new EmployeeDto(10L, "Avika",
+                "Gaur", "a.guar@gmail.com", "C3A",
+                "10-02-1996", 1500000);
+        Mockito.when(employeeService.getEmployeeById(Mockito.anyLong())).thenReturn(employeeDto);
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees/10"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName")
+                        .value("Avika"));
+
+    }
+
+    @Test
+    void shouldReturnHttpStatusNotFound() throws Exception {
+        Mockito.when(employeeService.getEmployeeById(Mockito.anyLong())).thenReturn(null);
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees/10"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
+                        .value("The Employee resource is not present for Employee Id of value 10"));
     }
 
     private String toJsonString(EmployeeDto employeeDto) {
