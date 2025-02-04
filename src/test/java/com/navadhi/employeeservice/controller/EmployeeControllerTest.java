@@ -15,6 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+
 @AutoConfigureMockMvc
 @WebMvcTest
 class EmployeeControllerTest {
@@ -111,6 +115,26 @@ class EmployeeControllerTest {
         Mockito.verify(employeeService, Mockito.times(1)).createEmployee(employeeDto);
     }
 
+    @Test
+    void shouldReturnHttpStatusOkAndAllEmployees() throws Exception {
+        Mockito.when(employeeService.getAllEmployees()).thenReturn(createEmployees());
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[:1].firstName")
+                        .value("Amruta"));
+        Mockito.verify(employeeService, Mockito.times(1)).getAllEmployees();
+    }
+
+    @Test
+    void shouldReturnHttpStatusNoContent() throws Exception {
+        Mockito.when(employeeService.getAllEmployees()).thenReturn(Collections.emptyList());
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees"))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+        Mockito.verify(employeeService, Mockito.times(1)).getAllEmployees();
+    }
+
     private String toJsonString(EmployeeDto employeeDto) {
         ObjectMapper objectMapper = new ObjectMapper();
         String result = null;
@@ -120,5 +144,14 @@ class EmployeeControllerTest {
             System.out.println("Exception while converting to JSON string.");
         }
         return result;
+    }
+
+    private List<EmployeeDto> createEmployees() {
+        return List.of(
+                new EmployeeDto(1123L, "Amruta", "Kapdeo", "a.k@gmail.com",
+                        "C3A", "01-01-1990", 1200000),
+                new EmployeeDto(1121L, "Jyoti", "Jain", "j.jain@gmail.com",
+                        "C3B", "20-12-1990", 1500000)
+        );
     }
 }
