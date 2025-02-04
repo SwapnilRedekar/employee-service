@@ -58,6 +58,7 @@ class EmployeeServiceTest {
         Assertions.assertEquals(employeeDto, employeeService.createEmployee(employeeDto));
         Mockito.verify(employeeRepository, Mockito.times(1)).saveAndFlush(employee);
     }
+<<<<<<< HEAD
 
     @Test
     void shouldReturnAllEmployees() {
@@ -75,5 +76,13 @@ class EmployeeServiceTest {
                 new Employee("Jyoti", "Jain", "j.jain@gmail.com",
                         "C3B", LocalDate.of(1990, 12, 20), 1500000)
         );
+=======
+    
+    @Test
+    void shouldReturnEmployeeById() {
+        Mockito.when(employeeRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(employee));
+        Assertions.assertEquals(employeeDto, employeeService.getEmployeeById(10L));
+        Mockito.verify(employeeRepository,Mockito.times(1)).findById(10L);
+>>>>>>> 6434e30 (Feature to fetch Employee by employee id)
     }
 }
