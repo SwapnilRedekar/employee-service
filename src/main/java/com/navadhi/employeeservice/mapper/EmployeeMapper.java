@@ -22,7 +22,7 @@ public class EmployeeMapper {
     public static Employee toEmployee(EmployeeDto employeeDto) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate dataOfBirth = LocalDate.parse(employeeDto.dateOfBirth(), dateFormatter);
-        return new Employee(employeeDto.firstName(), employeeDto.lastName(),
+        return new Employee(employeeDto.employeeId(), employeeDto.firstName(), employeeDto.lastName(),
                 employeeDto.email(), employeeDto.grade(), dataOfBirth, employeeDto.salary());
     }
 }

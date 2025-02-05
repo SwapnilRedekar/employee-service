@@ -17,7 +17,7 @@ class EmployeeMapperTest {
         employeeDto = new EmployeeDto(null, "Avika",
                 "Gaur", "a.gaur@gmail.com", "C3A",
                 "10-02-1996", 1500000);
-        employee = new Employee("Avika",
+        employee = new Employee(null, "Avika",
                 "Gaur", "a.gaur@gmail.com", "C3A",
                 LocalDate.of(1996, 2, 10), 1500000);
     }
