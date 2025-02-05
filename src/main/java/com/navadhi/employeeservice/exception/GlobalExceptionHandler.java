@@ -32,6 +32,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EmailCantBeUpdatedException.class)
+    public ResponseEntity<ErrorResponseDto> handleEmailCantBeUpdatedException(
+            EmailCantBeUpdatedException exception,
+            WebRequest request
+    ) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                LocalDateTime.now(), HttpStatus.BAD_REQUEST,
+                exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(
             ResourceNotFoundException exception,

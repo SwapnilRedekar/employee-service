@@ -14,7 +14,7 @@ public class Employee {
     @SequenceGenerator(name = "employeeidseq", sequenceName = "employee_id_seq",
             allocationSize = 1, initialValue = 1, schema = "employee_management")
     @Column(name = "employee_id", nullable = false)
-    private long employeeId;
+    private Long employeeId;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -38,7 +38,8 @@ public class Employee {
 
     }
 
-    public Employee(String firstName, String lastName, String email, String grade, LocalDate dataOfBirth, double salary) {
+    public Employee(Long employeeId, String firstName, String lastName, String email, String grade, LocalDate dataOfBirth, double salary) {
+        this.employeeId = employeeId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -47,7 +48,7 @@ public class Employee {
         this.salary = salary;
     }
 
-    public long getEmployeeId() {
+    public Long getEmployeeId() {
         return employeeId;
     }
 

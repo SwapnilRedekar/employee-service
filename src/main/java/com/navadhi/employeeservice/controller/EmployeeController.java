@@ -1,6 +1,7 @@
 package com.navadhi.employeeservice.controller;
 
 import com.navadhi.employeeservice.dto.EmployeeDto;
+import com.navadhi.employeeservice.entity.Employee;
 import com.navadhi.employeeservice.exception.EmailAlreadyExistsException;
 import com.navadhi.employeeservice.exception.ResourceNotFoundException;
 import com.navadhi.employeeservice.service.IEmployeeService;
@@ -49,6 +50,21 @@ public class EmployeeController {
             throw new ResourceNotFoundException("Employee", "Employee Id", String.valueOf(id));
 
         return ResponseEntity.ok(employeeDto);
+    }
+
+    @PutMapping
+    public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody @Validated EmployeeDto employeeDto) {
+        EmployeeDto updatedEmployee = employeeService.updateEmployee(employeeDto);
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<EmployeeDto> deleteEmployee(@PathVariable("id") Long id) {
+        boolean isDeleted = employeeService.deleteEmployee(id);
+        if(isDeleted)
+            return ResponseEntity.noContent().build();
+        else
+            throw new ResourceNotFoundException("Employee", "Employee Id", String.valueOf(id));
     }
 
 }

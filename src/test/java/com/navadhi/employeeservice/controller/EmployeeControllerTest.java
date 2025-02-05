@@ -5,6 +5,7 @@ import com.navadhi.employeeservice.dto.EmployeeDto;
 import com.navadhi.employeeservice.entity.Employee;
 import com.navadhi.employeeservice.service.IEmployeeService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -156,6 +157,38 @@ class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message")
                         .value("The Employee resource is not present for Employee Id of value 10"));
+    }
+
+    @Test
+    void shouldReturnHttpStatusOkAndUpdatedEmployee() throws Exception {
+        employeeDto = new EmployeeDto(10L, "Avika",
+                "Gaur", "a.guar@gmail.com", "C3A",
+                "10-02-1996", 1900000);
+        Mockito.when(employeeService.updateEmployee(Mockito.any(EmployeeDto.class))).thenReturn(employeeDto);
+        mockMvc.perform(MockMvcRequestBuilders
+                    .put("/v1/employees")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(toJsonString(employeeDto))
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary")
+                        .value(1900000));
+    }
+
+    @Test
+    void shouldReturnHttpStatusNoContentAndDeleteEmployee() throws Exception {
+        Mockito.when(employeeService.deleteEmployee(Mockito.anyLong())).thenReturn(true);
+        mockMvc.perform(MockMvcRequestBuilders
+                    .delete("/v1/employees/11"))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+        Mockito.verify(employeeService, Mockito.times(1)).deleteEmployee(11L);
+    }
+
+    @Test
+    void shouldReturnHttpStatusNotFoundForNonExistentEmployeeId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                    .delete("/v1/users/-1"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     private String toJsonString(EmployeeDto employeeDto) {
