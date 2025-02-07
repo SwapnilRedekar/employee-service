@@ -5,6 +5,7 @@ import com.navadhi.employeeservice.entity.Employee;
 import com.navadhi.employeeservice.exception.EmailAlreadyExistsException;
 import com.navadhi.employeeservice.exception.ResourceNotFoundException;
 import com.navadhi.employeeservice.service.IEmployeeService;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,5 +67,15 @@ public class EmployeeController {
         else
             throw new ResourceNotFoundException("Employee", "Employee Id", String.valueOf(id));
     }
+
+    @GetMapping("/q")
+    public ResponseEntity<List<EmployeeDto>> getAllEmployeesInSortingOrderByProperties (
+            @NotBlank @RequestParam("property") String property,
+            @NotBlank @RequestParam("sortType") String sortType) throws NoSuchFieldException{
+         List<EmployeeDto> employees = employeeService.getAllEmployeesInSortingOrderByProperties(property, sortType);
+         return ResponseEntity.ok(employees);
+    }
+
+
 
 }

@@ -54,6 +54,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponseDto, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InvalidSortingOrderException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidSortOrderException(
+            InvalidSortingOrderException exception,
+            WebRequest request
+    ) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                LocalDateTime.now(), HttpStatus.BAD_REQUEST,
+                exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidSortingPropertyException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidSortingPropertyException(
+            InvalidSortingPropertyException exception,
+            WebRequest request
+    ) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                LocalDateTime.now(), HttpStatus.BAD_REQUEST,
+                exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
