@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, PagingAndSortingRepository<Employee, Long> {
 
     Optional<Employee> findByEmail(String email);
+
 }

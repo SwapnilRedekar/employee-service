@@ -5,6 +5,8 @@ import com.navadhi.employeeservice.entity.Employee;
 
 import java.util.List;
 
+import java.util.List;
+
 public interface IEmployeeService {
 
     EmployeeDto createEmployee(EmployeeDto employeeDto);
@@ -18,4 +20,7 @@ public interface IEmployeeService {
     EmployeeDto updateEmployee(EmployeeDto employeeDto);
 
     boolean deleteEmployee(long id);
+
+    List<EmployeeDto> getAllEmployeesPaginated(String property, String order, int size, int page);
+
 }
