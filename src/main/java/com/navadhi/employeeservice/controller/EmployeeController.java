@@ -1,6 +1,7 @@
 package com.navadhi.employeeservice.controller;
 
 import com.navadhi.employeeservice.dto.EmployeeDto;
+import com.navadhi.employeeservice.entity.Employee;
 import com.navadhi.employeeservice.exception.EmailAlreadyExistsException;
 import com.navadhi.employeeservice.exception.ResourceNotFoundException;
 import com.navadhi.employeeservice.service.IEmployeeService;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
