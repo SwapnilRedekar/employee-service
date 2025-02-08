@@ -9,6 +9,8 @@ import com.navadhi.employeeservice.exception.ResourceNotFoundException;
 import com.navadhi.employeeservice.mapper.EmployeeMapper;
 import com.navadhi.employeeservice.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,7 @@ import java.util.*;
 @Service
 public class EmployeeService implements IEmployeeService{
 
-    private static final List<String> sortingTypes = List.of("ASC", "DESC");
-    private static final List<String> sortingProperties = List.of("firstName", "lastName", "dataOfBirth", "salary");
+    private static final List<String> sortingProperties = List.of("firstName", "lastName", "dataOfBirth", "salary", "NA");
     private final EmployeeRepository employeeRepository;
 
     @Autowired
@@ -90,26 +91,36 @@ public class EmployeeService implements IEmployeeService{
     }
 
     @Override
-    public List<EmployeeDto> getAllEmployeesInSortingOrderByProperties (
-            String property, String sortType) {
-            Sort.Direction direction;
-
-            if(!sortingTypes.contains(sortType))
-                throw new InvalidSortingOrderException(sortType);
-            else
-               direction = sortType.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-
-            String[] properties = property.split(",");
-            
-            for (String prop: properties) {
-               if(!sortingProperties.contains(prop))
-                   throw new InvalidSortingPropertyException(prop);
-            }
-
-            Sort sort = Sort.by(direction, properties);
-            return employeeRepository.findAll(sort)
+    public List<EmployeeDto> getAllEmployeesPaginated(String property, String order, int size, int page) {
+            Pageable pageable = buildPageable(property, order, size, page);
+            return employeeRepository.findAll(pageable)
                     .stream()
                     .map(EmployeeMapper::toEmployeeDto)
                     .toList();
+    }
+
+    private Pageable buildPageable(String property, String order, int size, int page) {
+        Pageable pageable = null;
+        String[] properties = null;
+        Sort.Direction direction = switch (order) {
+                case "ASC"  -> Sort.Direction.ASC;
+                case "DESC" -> Sort.Direction.DESC;
+                case "NAT"  -> null;
+                default -> throw new InvalidSortingOrderException(order);
+            };
+        if (!order.equals("NAT")) {
+            properties = property.split(",");
+            for (String prop : properties) {
+                if (!sortingProperties.contains(prop))
+                    throw new InvalidSortingPropertyException(prop);
+            }
+        }
+        if(Objects.isNull(direction))
+            pageable = PageRequest.of(page, size);
+        else {
+            Sort sort = Sort.by(direction, properties);
+            pageable = PageRequest.of(page, size, sort);
+        }
+        return pageable;
     }
 }

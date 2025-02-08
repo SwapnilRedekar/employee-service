@@ -18,5 +18,5 @@ public interface IEmployeeService {
 
     boolean deleteEmployee(long id);
 
-    List<EmployeeDto> getAllEmployeesInSortingOrderByProperties(String property, String sortingType) throws NoSuchFieldException;
+    List<EmployeeDto> getAllEmployeesPaginated(String property, String order, int size, int page);
 }

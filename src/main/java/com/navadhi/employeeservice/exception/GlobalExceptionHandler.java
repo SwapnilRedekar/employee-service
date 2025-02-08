@@ -92,5 +92,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
 
-
 }
