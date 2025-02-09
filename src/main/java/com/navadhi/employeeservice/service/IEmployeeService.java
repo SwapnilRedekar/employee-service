@@ -1,5 +1,6 @@
 package com.navadhi.employeeservice.service;
 
+import com.navadhi.employeeservice.dto.EmployeeDetailDto;
 import com.navadhi.employeeservice.dto.EmployeeDto;
 import com.navadhi.employeeservice.entity.Employee;
 
@@ -15,7 +16,7 @@ public interface IEmployeeService {
 
     List<EmployeeDto> getAllEmployees();
 
-    EmployeeDto getEmployeeById(long id);
+    EmployeeDetailDto getEmployeeById(long id);
 
     EmployeeDto updateEmployee(EmployeeDto employeeDto);
 

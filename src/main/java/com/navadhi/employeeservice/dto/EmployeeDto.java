@@ -19,7 +19,9 @@ public record EmployeeDto(Long employeeId,
                           regexp = "^(0?[\\d]|[1|2][\\d]|3[0|1])-(0?[\\d]|1[0-2])-([\\d]{4})$")
                           String dateOfBirth,
                           @Positive(message = "Salary can't be negative")
-                          double salary) {
+                          double salary,
+                          @NotBlank(message = "Department code can't be null/blank")
+                          String departmentCode) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

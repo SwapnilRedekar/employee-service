@@ -1,5 +1,6 @@
 package com.navadhi.employeeservice.controller;
 
+import com.navadhi.employeeservice.dto.EmployeeDetailDto;
 import com.navadhi.employeeservice.dto.EmployeeDto;
 import com.navadhi.employeeservice.entity.Employee;
 import com.navadhi.employeeservice.exception.EmailAlreadyExistsException;
@@ -46,8 +47,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") long id) {
-        EmployeeDto employeeDto = employeeService.getEmployeeById(id);
+    public ResponseEntity<EmployeeDetailDto> getEmployeeById(@PathVariable("id") long id) {
+        EmployeeDetailDto employeeDto = employeeService.getEmployeeById(id);
 
         if(Objects.isNull(employeeDto))
             throw new ResourceNotFoundException("Employee", "Employee Id", String.valueOf(id));

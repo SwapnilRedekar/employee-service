@@ -1,5 +1,7 @@
 package com.navadhi.employeeservice.service;
 
+import com.navadhi.employeeservice.dto.DepartmentDto;
+import com.navadhi.employeeservice.dto.EmployeeDetailDto;
 import com.navadhi.employeeservice.dto.EmployeeDto;
 import com.navadhi.employeeservice.entity.Employee;
 import com.navadhi.employeeservice.exception.EmailCantBeUpdatedException;
@@ -12,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,10 +30,13 @@ public class EmployeeService implements IEmployeeService{
 
     private static final List<String> sortingProperties = List.of("firstName", "lastName", "dataOfBirth", "salary", "NA");
     private final EmployeeRepository employeeRepository;
+    private final WebClient webClient;
+    //private final APIClient apiClient;
 
     @Autowired
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, WebClient webClient) {
         this.employeeRepository = employeeRepository;
+        this.webClient = webClient;
     }
 
     @Override
@@ -54,10 +61,16 @@ public class EmployeeService implements IEmployeeService{
     }
 
     @Override
-    public EmployeeDto getEmployeeById(long id) {
-        return employeeRepository.findById(id)
-                .map(EmployeeMapper::toEmployeeDto)
-                .orElse(null);
+    public EmployeeDetailDto getEmployeeById(long id) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if(optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
+            DepartmentDto department = fetchDepartment(employee);
+            return EmployeeMapper.toEmployeeDetailDto(
+                    department, employee);
+
+        } else
+            throw new ResourceNotFoundException("Employee", "Employee id", String.valueOf(id));
     }
 
     @Override
@@ -70,7 +83,7 @@ public class EmployeeService implements IEmployeeService{
                 employee = new Employee(employeeDto.employeeId(), employeeDto.firstName(),
                         employeeDto.lastName(), employeeDto.email(), employeeDto.grade(),
                         LocalDate.parse(employeeDto.dateOfBirth(), DateTimeFormatter.ofPattern("dd-MM-yyyy")),
-                        employeeDto.salary());
+                        employeeDto.salary(), employeeDto.departmentCode());
                 employee = employeeRepository.saveAndFlush(employee);
                 updatedEmployeeDto = EmployeeMapper.toEmployeeDto(employee);
             } else {
@@ -103,7 +116,7 @@ public class EmployeeService implements IEmployeeService{
     }
 
     private Pageable buildPageable(String property, String order, int size, int page) {
-        Pageable pageable = null;
+        Pageable pageable;
         String[] properties = null;
         Sort.Direction direction = switch (order) {
                 case "ASC"  -> Sort.Direction.ASC;
@@ -125,6 +138,18 @@ public class EmployeeService implements IEmployeeService{
             pageable = PageRequest.of(page, size, sort);
         }
         return pageable;
+    }
+
+    private DepartmentDto fetchDepartment(Employee employee) {
+         return webClient.get()
+                         .uri("http://localhost:8080/v1/departments/" + employee.getDepartmentCode())
+                         .retrieve()
+                         .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
+                             throw new ResourceNotFoundException("Department", "Department Code", employee.getDepartmentCode());
+                         })
+                         .bodyToMono(DepartmentDto.class)
+                         .block();
+        //return apiClient.getDepartment(employee.getDepartmentCode());
     }
 
 }

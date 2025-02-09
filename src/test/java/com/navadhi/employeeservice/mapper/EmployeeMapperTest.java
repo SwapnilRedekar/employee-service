@@ -16,10 +16,10 @@ class EmployeeMapperTest {
     public void init() {
         employeeDto = new EmployeeDto(null, "Avika",
                 "Gaur", "a.gaur@gmail.com", "C3A",
-                "10-02-1996", 1500000);
+                "10-02-1996", 1500000, "EC101");
         employee = new Employee(null, "Avika",
                 "Gaur", "a.gaur@gmail.com", "C3A",
-                LocalDate.of(1996, 2, 10), 1500000);
+                LocalDate.of(1996, 2, 10), 1500000, "EC101");
     }
 
     @Test

@@ -3,9 +3,10 @@ package com.navadhi.employeeservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navadhi.employeeservice.dto.EmployeeDto;
 import com.navadhi.employeeservice.entity.Employee;
+import com.navadhi.employeeservice.exception.InvalidSortingOrderException;
+import com.navadhi.employeeservice.exception.InvalidSortingPropertyException;
 import com.navadhi.employeeservice.service.IEmployeeService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @AutoConfigureMockMvc
@@ -189,6 +191,56 @@ class EmployeeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                     .delete("/v1/users/-1"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnHttpStatusOkAndReturnListOfThreeEmployeesInAscendingOrder() throws Exception {
+        Mockito.when(employeeService.getAllEmployeesPaginated(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt()))
+                .thenReturn(createEmployees().stream()
+                        .sorted(Comparator.comparing(EmployeeDto::firstName))
+                        .toList());
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees/q?property=firstName&order=ASC&size=3&page=0"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[:1].firstName")
+                        .value("Amruta"));
+    }
+
+    @Test
+    void shouldReturnHttpStatusOkAndReturnListOfEmployeesInNaturalOrder() throws Exception {
+        Mockito.when(employeeService.getAllEmployeesPaginated(
+                        Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt())
+        ).thenReturn(createEmployees());
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees/q?property=NA&order=NAT&size=3&page=0"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[:1].firstName")
+                        .value("Amruta"));
+    }
+
+    @Test
+    void shouldReturnHttpStatusBadRequestForInvalidSortingOrderType() throws Exception {
+        Mockito.when(employeeService.getAllEmployeesPaginated(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt()
+        )).thenThrow(new InvalidSortingOrderException("SEC"));
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees/q?property=firstName&order=SEC&size=3&page=0"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
+                        .value("Given sorting type: SEC is not supported."));
+    }
+
+    @Test
+    void shouldReturnHttpStatusBadRequestForInvalidSortingProperty() throws Exception {
+        Mockito.when(employeeService.getAllEmployeesPaginated(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt()
+        )).thenThrow(new InvalidSortingPropertyException("experience"));
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/v1/employees/q?property=experience&order=ASC&size=3&page=0"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
+                        .value("Given sorting property: experience is not present in Employee Resource"));
     }
 
     private String toJsonString(EmployeeDto employeeDto) {

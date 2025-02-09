@@ -34,11 +34,16 @@ public class Employee {
     @Column(name = "salary")
     private double salary;
 
+    @Column(name = "department_code")
+    private String departmentCode;
+
     protected Employee() {
 
     }
 
-    public Employee(Long employeeId, String firstName, String lastName, String email, String grade, LocalDate dataOfBirth, double salary) {
+    public Employee(Long employeeId, String firstName, String lastName,
+                    String email, String grade, LocalDate dataOfBirth,
+                    double salary, String departmentCode) {
         this.employeeId = employeeId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,6 +51,7 @@ public class Employee {
         this.grade = grade;
         this.dateOfBirth = dataOfBirth;
         this.salary = salary;
+        this.departmentCode = departmentCode;
     }
 
     public Long getEmployeeId() {
@@ -76,16 +82,28 @@ public class Employee {
         return salary;
     }
 
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Employee employee)) return false;
-        return Double.compare(salary, employee.salary) == 0 && Objects.equals(firstName, employee.firstName) && Objects.equals(lastName, employee.lastName) && Objects.equals(email, employee.email) && Objects.equals(grade, employee.grade) && Objects.equals(dateOfBirth, employee.dateOfBirth);
+        return Double.compare(salary, employee.salary) == 0 &&
+                Objects.equals(employeeId, employee.employeeId) &&
+                Objects.equals(firstName, employee.firstName) &&
+                Objects.equals(lastName, employee.lastName) &&
+                Objects.equals(email, employee.email) &&
+                Objects.equals(grade, employee.grade) &&
+                Objects.equals(dateOfBirth, employee.dateOfBirth) &&
+                Objects.equals(departmentCode, employee.departmentCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, email, grade, dateOfBirth, salary);
+        return Objects.hash(employeeId, firstName, lastName, email,
+                grade, dateOfBirth, salary, departmentCode);
     }
 
     @Override
@@ -98,6 +116,7 @@ public class Employee {
                 ", grade='" + grade + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", salary=" + salary +
+                ", departmentCode='" + departmentCode + '\'' +
                 '}';
     }
 }
